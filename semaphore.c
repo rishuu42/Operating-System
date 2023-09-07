@@ -14,7 +14,6 @@ void LockOpe() {
     printf("Lock released by Child Process %d\n", getpid());
 }
 int main() {
-    LockOpe();
     if (sem_init(&mutex, 0, 1) != 0) {
         printf("Semaphore Failed");
         exit(1);
@@ -24,13 +23,18 @@ int main() {
     scanf("%d", &num);
     for (int i = 0; i < num; i++) {
         pid_t id = fork();
-        LockOpe();
         if (id == -1) {
             printf("Fork failed");
             exit(1);
         } else if (id == 0) {
+            printf("------%d-----\n",i+1);
             LockOpe();
             exit(0);
+        } else if(id > 0)
+        {
+            printf("------%d-----\n",i+10);
+            LockOpe();
+            wait(NULL);
         }
     }
     for (int i = 0; i < num; i++) {
